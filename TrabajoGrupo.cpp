@@ -59,6 +59,11 @@ void generaClave(char valor[], int nValores, int minimo, int maximo)
 	// Hay que añadir el terminador de cadenas a la clave generada. Tiene que estar en la última posición del array 
 	valor[nValores] = '\0';
 }
+
+/*
+* Revisa si en la entrada de datos hay caracteres fuera del rango.  
+*
+*/
 bool revisaRango(char propuesta[], int nElementos)
 {
 	int i;
@@ -70,6 +75,7 @@ bool revisaRango(char propuesta[], int nElementos)
 			return false;
 		}		
 }
+
 /*
 * Encuentra repetidos en la propuesta
 * Si algun caracter introducido está repetido da error.
@@ -77,7 +83,6 @@ bool revisaRango(char propuesta[], int nElementos)
 */
 bool revisaRepetidos(char propuesta[], int nElementos)
 {
-	// No rep
 	int i, j;
 	for (i = 0; i < nElementos; i++)
 		for (j = i + 1; j < nElementos; j++)
