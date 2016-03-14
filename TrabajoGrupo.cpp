@@ -75,7 +75,7 @@ bool revisaRango(char propuesta[], int nElementos)
 * Si algun caracter introducido está repetido da error.
 *
 */
-bool revisarCondiciones(char propuesta[], int nElementos)
+bool revisaRepetidos(char propuesta[], int nElementos)
 {
 	// No rep
 	int i, j;
@@ -143,7 +143,7 @@ int main()
 		// Si se introducen valores repetidos se avisa. 
 		// Cuenta como un intento 
 		cout << "Este es tu intento numero " << contador_intentos << endl;
-		if (revisarCondiciones(intento, N_COLORES_CLAVE) == false)
+		if (revisaRepetidos(intento, N_COLORES_CLAVE) == false)
 		{
 			cout << "No se permiten valores repetidos en la jugada" << endl;
 		}
