@@ -17,6 +17,11 @@ char Clave[N_COLORES_CLAVE + 1] = "ABCD";
 
 extern "C" int calculaNMuertosASM(char propuesta[], char clave[], int nElementos);
 
+/*
+* Lee la licencia para permitir el juego. 
+*
+*/
+
 bool leeLicencia(string licencia){
 	if (licencia == LICENCIA)
 	{
@@ -24,6 +29,10 @@ bool leeLicencia(string licencia){
 	}
 	return false;
 }
+/*
+* Genera el valor aleatorio para las fichas
+*
+*/
 
 void generaClave(char valor[], int nValores, int minimo, int maximo)
 {
@@ -34,7 +43,7 @@ void generaClave(char valor[], int nValores, int minimo, int maximo)
 
 	while (generados != nValores)
 	{
-		// Genera un número aleatorio entre máximo y mínimo
+		// Genera un nÃºmero aleatorio entre mÃ¡ximo y mÃ­nimo
 		// minimo = codigo ASCII del primer caracter valido
 		// maximo = codigo ASCII del ultimo caracter valido
 
@@ -49,14 +58,14 @@ void generaClave(char valor[], int nValores, int minimo, int maximo)
 			i++;
 		}
 
-		// Si el caracter no está repetido, se añade como válido a la clave
+		// Si el caracter no estÃ¡ repetido, se aÃ±ade como vÃ¡lido a la clave
 		if (!repetido)
 		{
 			valor[generados] = (char)aleatorio;
 			generados++;
 		}
 	}
-	// Hay que añadir el terminador de cadenas a la clave generada. Tiene que estar en la última posición del array 
+	// Hay que aÃ±adir el terminador de cadenas a la clave generada. Tiene que estar en la Ãºltima posiciÃ³n del array 
 	valor[nValores] = '\0';
 }
 
@@ -77,8 +86,7 @@ bool revisaRango(char propuesta[], int nElementos)
 }
 
 /*
-* Encuentra repetidos en la propuesta
-* Si algun caracter introducido está repetido da error.
+* Encuentra repetidos en la entrada
 *
 */
 bool revisaRepetidos(char propuesta[], int nElementos)
@@ -91,6 +99,10 @@ bool revisaRepetidos(char propuesta[], int nElementos)
 				return true;
 }
 
+/*
+* Calcula las posiciones exactas que has acertado. 
+*
+*/
 int calculaNMuertos(char propuesta[], char solucion[], int nElementos)
 {
 	int nMuertos = 0;
@@ -103,6 +115,11 @@ int calculaNMuertos(char propuesta[], char solucion[], int nElementos)
 
 
 }
+
+/*
+* Calcula las fichas que has acertado aunque no esten en posicion. 
+*
+*/
 int calculaNHeridos(char propuesta[], char solucion[], int nElementos)
 {
 	int nHeridos = 0;
@@ -118,6 +135,11 @@ int calculaNHeridos(char propuesta[], char solucion[], int nElementos)
 	}
 	return nHeridos;
 }
+
+/*
+* Programa principal
+*
+*/
 
 int main()
 {
@@ -139,6 +161,7 @@ int main()
 	generaClave(Clave, N_COLORES_CLAVE, CARACTER_INICIAL, CARACTER_FINAL);
 	int contador_intentos = 0;
 
+	// Limitamos el juego a un numero de intentos. 
 	while (contador_intentos != N_MAX_INTENTOS)
 	{
 		cout << Clave << endl;
@@ -158,7 +181,6 @@ int main()
 		}
 		else
 		{
-
 			// calculamos muertos y heridos. 
 			nMuertos = calculaNMuertos(intento, Clave, N_COLORES_CLAVE);
 			nHeridos = calculaNHeridos(intento, Clave, N_COLORES_CLAVE);
