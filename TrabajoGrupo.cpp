@@ -6,34 +6,32 @@
 
 using namespace std;
 
-const int N_MAX_INTENTOS = 15;
+const int N_MAX_INTENTOS = 5;
 const int N_COLORES = 6;
 const int N_COLORES_CLAVE = 4;
 const int CARACTER_INICIAL = 'A';
-const string LICENCIA = "Trabajo Grupo FCyR";
+const string LICENCIA = "Trabajo grupo FCyR";
 const int CARACTER_FINAL = CARACTER_INICIAL + N_COLORES;
-
 char Clave[N_COLORES_CLAVE + 1] = "ABCD";
 
 extern "C" int calculaNMuertosASM(char propuesta[], char clave[], int nElementos);
 
 /*
-* Lee la licencia para permitir el juego. 
+* Lee la licencia del programa y comprueba q sea valida. 
+* La licencia debe ser como máximo de 20 caracteres. 
 *
 */
-
-bool leeLicencia(string licencia){
-	if (licencia == LICENCIA)
-	{
-		return true;
-	}
-	return false;
+bool leeLicencia(){
+	char licencia[20]; 
+	cout << "Introduce la licencia]: " << endl;
+	cin.getline(licencia,20);	
+	return (strlen(licencia) <= 20 && licencia == LICENCIA);
 }
+
 /*
-* Genera el valor aleatorio para las fichas
+* Función pseudo-aleatoria para generar la clave a partir de valor[]
 *
 */
-
 void generaClave(char valor[], int nValores, int minimo, int maximo)
 {
 	int aleatorio = 0;
@@ -68,28 +66,22 @@ void generaClave(char valor[], int nValores, int minimo, int maximo)
 	// Hay que añadir el terminador de cadenas a la clave generada. Tiene que estar en la última posición del array 
 	valor[nValores] = '\0';
 }
-
 /*
-* Revisa si en la entrada de datos hay caracteres fuera del rango.  
+* Comprueba que los datos introducidos sean entre el rango ASCII CARACTER_INICIAL y CARACTER_FINAL
 *
 */
-bool revisaRango(char propuesta[], int nElementos)
-{
-	int i;
-	for (i = 0; i < nElementos; i++)
-		if (propuesta[i] >= CARACTER_INICIAL && propuesta[i] < CARACTER_FINAL)
-		{
-		}
-		else{
+bool compruebaRangoCaraceteres(char propuesta[], int nElementos)
+{	
+	for (int i = 0; i < nElementos; i++)
+		if (!(propuesta[i] >= CARACTER_INICIAL && propuesta[i] < CARACTER_FINAL))
 			return false;
-		}		
+			return true;
 }
-
 /*
-* Encuentra repetidos en la entrada
+* Comprueba que los datos introducidos no contengan ningun caracter repetido. 
 *
 */
-bool revisaRepetidos(char propuesta[], int nElementos)
+bool compruebaCaracteresRepetidos(char propuesta[], int nElementos)
 {
 	int i, j;
 	for (i = 0; i < nElementos; i++)
@@ -98,28 +90,24 @@ bool revisaRepetidos(char propuesta[], int nElementos)
 				return false;
 				return true;
 }
-
 /*
-* Calcula las posiciones exactas que has acertado. 
+* Calcula y devuelve el numero de muertos o posiciones exactas acertadas
 *
 */
 int calculaNMuertos(char propuesta[], char solucion[], int nElementos)
 {
 	int nMuertos = 0;
 	for (int i = 0; i < nElementos; i++){
-
 		if (propuesta[i] == solucion[i])
 			nMuertos++;
 	}
 	return nMuertos;
-
-
 }
-
 /*
-* Calcula las fichas que has acertado aunque no esten en posicion. 
+* Calcula y devuelve el numero de heridos o posiciones no exactas acertadas
 *
 */
+
 int calculaNHeridos(char propuesta[], char solucion[], int nElementos)
 {
 	int nHeridos = 0;
@@ -137,59 +125,59 @@ int calculaNHeridos(char propuesta[], char solucion[], int nElementos)
 }
 
 /*
-* Programa principal
-*
+* Aplicación principal main(). 
+* Comprueba licencia y condiciones. Permite hasta un numero maximo de N_MAX_INTENTOS intentos. 
 */
 
 int main()
 {
-	// leemos los datos de la licencia
-	string licencia;
-	cout << "Para poder jugar, introduce la licencia: " << endl;
-	getline(cin, licencia);
-	if (leeLicencia(licencia) == false){
+	// leemos los datos de la licencia y si son incorrectos , salimos del programa. 
+	if (leeLicencia() == false){
 		printf("Error en licencia\n");
-		//exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-
-	// comienza el juego 
+	
+	// declaración de variables locales 
 	int nMuertos = 0;
 	int nHeridos = 0;
 	int nIntentos = 0;
 	char intento[N_COLORES_CLAVE + 1];
+	int contador_intentos = 0;
+	// semilla y generación pseudo-aleatoria de clave. 
 	srand((unsigned int)time(NULL));
 	generaClave(Clave, N_COLORES_CLAVE, CARACTER_INICIAL, CARACTER_FINAL);
-	int contador_intentos = 0;
-
-	// Limitamos el juego a un numero de intentos. 
+	
+	// empieza el juego hasta agotar N_MAX_INTENTOS
 	while (contador_intentos != N_MAX_INTENTOS)
 	{
-		cout << Clave << endl;
+		//cout << Clave << endl; // quitar para la version final 
+		// incrementamos intentos 
 		contador_intentos++;
+		// preguntamos al jugador y leemos
 		cout << "Introduce intento: ";
 		cin >> intento;
-		// Si se introducen valores repetidos se avisa. 
-		// Cuenta como un intento 
+		// Si se introducen valores repetidoso valores fuera del rango, avisa pero cuenta como un intento. 
 		cout << "Este es tu intento numero " << contador_intentos << endl;
-		if (revisaRepetidos(intento, N_COLORES_CLAVE) == false)
+		if (compruebaCaracteresRepetidos(intento, N_COLORES_CLAVE) == false)
 		{
 			cout << "No se permiten valores repetidos en la jugada" << endl;
 		}
-		else if (revisaRango(intento, N_COLORES_CLAVE) == false)
+		else if (compruebaRangoCaraceteres(intento, N_COLORES_CLAVE) == false)
 		{
 			cout << "No se permiten valores fueran del rango en la jugada" << endl;
 		}
 		else
 		{
-			// calculamos muertos y heridos. 
-			nMuertos = calculaNMuertos(intento, Clave, N_COLORES_CLAVE);
+
+			// calculamos muertos (ASM) y heridos. 
+			nMuertos = calculaNMuertosASM(intento, Clave, N_COLORES_CLAVE);
 			nHeridos = calculaNHeridos(intento, Clave, N_COLORES_CLAVE);
 			cout << "Hay " << nHeridos << " Heridos " << " y " << nMuertos << " Muertos" << endl;
 
-			// Juego ganado 
+			// si tenemos 4 muertos, juego ganado. 
 			if (nMuertos == 4)
 			{
-				cout << "Has ganado en el intento numero " << contador_intentos << endl;
+				cout << "Correcto ! Has ganado en el intento numero " << contador_intentos << endl;
 				exit(EXIT_FAILURE);
 			}
 		}
@@ -198,6 +186,7 @@ int main()
 	// Juego perdido
 	if (contador_intentos == N_MAX_INTENTOS){
 		cout << "Has perdido :(" << endl;
+		cout << "La clave era:  " << Clave << endl;
 	}
 	return 0;
 }
